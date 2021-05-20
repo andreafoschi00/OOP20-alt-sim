@@ -16,22 +16,45 @@ public class MainPlaneView extends Application {
     /** Screen height of the view.  */
     private static final double SCREEN_HEIGHT = Screen.getPrimary().getBounds().getHeight();
 
+    private static boolean fullScreenMode;
+    private Scene scene;
+    private Pane paneRoot;
+    private ImageResized planeImageResized;
+
+    public MainPlaneView() {
+        this.paneRoot = new Pane();
+        this.planeImageResized = new ImageResized();
+        this.paneRoot.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.scene = new Scene(paneRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        planeImageResized.resizeImageSprite();
+        paneRoot.getChildren().add(planeImageResized.getImageSprite());
+    }
+
+    public MainPlaneView(final double screenWidth, final double screenHeight) {
+        this.paneRoot = new Pane();
+        this.planeImageResized = new ImageResized(screenWidth, screenHeight);
+        this.paneRoot.resize(screenWidth, screenHeight);
+        this.scene = new Scene(paneRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        planeImageResized.resizeImageSprite();
+        paneRoot.getChildren().add(planeImageResized.getImageSprite());
+    }
+
     @Override
     public void start(final Stage stage) throws Exception {
 
         try {
-            Pane paneRoot = new Pane();
             ImageResized planeImageResized = new ImageResized();
-
             // Calculating the Proportion --> (Image:Screen)
             planeImageResized.resizeImageSprite();
 
             // View Plane demonstrating:
-            paneRoot.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
             paneRoot.getChildren().add(planeImageResized.getImageSprite());
 
-            Scene scene = new Scene(paneRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
             stage.setScene(scene);
+            //set the Screen in FullScreen mode:
+            stage.setFullScreen(MainPlaneView.fullScreenMode);
             stage.show();
 
         } catch (final Exception e) {
@@ -53,5 +76,25 @@ public class MainPlaneView extends Application {
 
     public static double getScreenHeight() {
         return SCREEN_HEIGHT;
+    }
+
+    public static void setFullScreenTrue() {
+        fullScreenMode = true;
+    }
+
+    public static void setFullScreenFalse() {
+        fullScreenMode = false;
+    }
+
+    public static boolean isFullScreen() {
+        return fullScreenMode;
+    }
+
+    public Pane getPane() {
+        return this.paneRoot;
+    }
+
+    public Scene getScene() {
+        return this.scene;
     }
 }
