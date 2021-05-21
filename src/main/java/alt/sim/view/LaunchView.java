@@ -4,7 +4,6 @@ import alt.sim.model.ImageResized;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -19,63 +18,54 @@ public class LaunchView extends Application {
 
     private static final double ASPECT_RATIO_DIVISION = 3;
 
-    private static final double NEW_WINDOW_WIDTH = 450;
+    private static final double NEW_WINDOW_WIDTH = 1000;
 
-    private static final double NEW_WINDOW_HEIGHT = 450;
+    private static final double NEW_WINDOW_HEIGHT = 1000;
 
     @Override
-    public void start(final Stage stage) throws Exception {
+    public void start(final Stage primaryStage) throws Exception {
         Button btnNewGame = new Button("New Game");
-        Button btnExit = new Button("Exit");
         Pane paneRoot = new Pane();
-        ImageResized planeImageResized = new ImageResized();
-
-        // Calculating the Proportion --> (Image:Screen)
-        planeImageResized.resizeImageSprite();
+        //ImageResized planeImageResized = new ImageResized();
 
         // View Plane demonstrating:
         paneRoot.resize(LAUNCH_SCREEN_WIDTH, LAUNCH_SCREEN_HEIGHT);
-        paneRoot.getChildren().addAll(btnNewGame, btnExit);
+        paneRoot.getChildren().addAll(btnNewGame);
 
-        Scene scene = new Scene(paneRoot, LAUNCH_SCREEN_WIDTH, LAUNCH_SCREEN_HEIGHT);
-        stage.setScene(scene);
+        Scene primaryScene = new Scene(paneRoot, LAUNCH_SCREEN_WIDTH, LAUNCH_SCREEN_HEIGHT);
+        primaryStage.setScene(primaryScene);
         //set the Screen in FullScreen mode:
-        stage.show();
+        primaryStage.show();
 
         //Button NewGame event for launch new window
         btnNewGame.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(final ActionEvent event) {
-                Pane root = new Pane();
-                try {
-                    //root = FXMLLoader.load(getClass().getClassLoader().getResource("path/to/other/view.fxml"), resources);
-                    MainPlaneView startedGame = new MainPlaneView();
-                    //Warning public method!!!
-                    startedGame.launchApplication();
 
-                    Stage stageLaunchView = startedGame.getStage();
-                    stageLaunchView.show();
-            
-                    // Hide this current window (if this is what you want)
-                    //((Node) (event.getSource())).getScene().getWindow().hide();
-                }
-                catch (Exception e) {
+                try {
+                    primaryStage.hide();
+                    startNewGame();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
 
-        //Button Exit event for terminated the window
-        btnExit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                Node newWindow;
+    public void startNewGame() {
+        Stage newGameStage = new Stage();
+        Pane paneRootNewGame = new Pane();
+        ImageResized planeImageResized = new ImageResized(NEW_WINDOW_WIDTH, NEW_WINDOW_HEIGHT);
 
-                Stage stage = (Stage) btnExit.getScene().getWindow();
-                stage.close();
-            }
-        });
+        paneRootNewGame.resize(LAUNCH_SCREEN_WIDTH, LAUNCH_SCREEN_HEIGHT);
+        paneRootNewGame.getChildren().add(planeImageResized.getImageSprite());
+        //resize planeImage to bounds of the window
+        planeImageResized.resizeImageSprite();
+
+        Scene sceneNewGame = new Scene(paneRootNewGame, NEW_WINDOW_WIDTH, NEW_WINDOW_HEIGHT);
+
+        newGameStage.setScene(sceneNewGame);
+        newGameStage.show();
     }
 
     public static void main(final String[] args) {
