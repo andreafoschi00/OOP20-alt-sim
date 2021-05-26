@@ -1,8 +1,15 @@
 package alt.sim.controller.engine;
 
+import alt.sim.model.plane.Plane;
+
 public class GameEngineImpl implements GameEngine {
 
     private static final long PERIOD = 1000L;
+    private Plane p1;
+
+    public GameEngineImpl() {
+        p1 = new Plane("images/map_components/airplane.png");
+    }
 
     @Override
     public void mainLoop() throws IllegalArgumentException {
@@ -51,7 +58,6 @@ public class GameEngineImpl implements GameEngine {
 
     @Override
     public void update(final int elapsed) {
-        // TODO Auto-generated method stub
 
     }
 
@@ -61,4 +67,7 @@ public class GameEngineImpl implements GameEngine {
 
     }
 
+    public Plane getP1() {
+        return p1;
+    }
 }
