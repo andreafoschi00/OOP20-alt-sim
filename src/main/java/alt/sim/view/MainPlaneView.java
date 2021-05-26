@@ -20,7 +20,6 @@ public class MainPlaneView extends Application {
 
     @Override
     public void start(final Stage stage) throws Exception {
-
         try {
             Pane paneRoot = new Pane();
             GameEngineImpl engine = new GameEngineImpl();
@@ -28,7 +27,14 @@ public class MainPlaneView extends Application {
             //Plane p1 = new Plane("images/map_components/airplane.png");
             // Calculating the Proportion --> (Image:Screen)
             //planeImageResized.resizeImageSprite();
-
+            class ThreadMain implements Runnable{
+                @Override
+                public void run() {
+                    engine.mainLoop();
+                }
+            }
+            Thread t = new Thread(new ThreadMain());
+            t.start();
             // View Plane demonstrating:
             paneRoot.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
             //paneRoot.getChildren().add(planeImageResized.getImageSprite());
