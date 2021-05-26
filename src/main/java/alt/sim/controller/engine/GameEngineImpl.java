@@ -1,14 +1,27 @@
 package alt.sim.controller.engine;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import alt.sim.model.plane.Plane;
+import javafx.geometry.Point2D;
 
 public class GameEngineImpl implements GameEngine {
 
-    private static final long PERIOD = 1000L;
+    private static final long PERIOD = 400L;
     private Plane p1;
+    private List<Point2D> points;
+    private Iterator<Point2D> pointIterator;
 
     public GameEngineImpl() {
         p1 = new Plane("images/map_components/airplane.png");
+        points = new LinkedList<>() {{
+                add(new Point2D(149, 149));
+                add(new Point2D(200, 200));
+                add(new Point2D(249, 249));
+                }};
+        pointIterator = points.iterator();
     }
 
     @Override
@@ -58,13 +71,15 @@ public class GameEngineImpl implements GameEngine {
 
     @Override
     public void update(final int elapsed) {
-
+        if (pointIterator.hasNext()) {
+            p1.setPoint(pointIterator.next());
+        }
     }
 
     @Override
     public void render() {
-        // TODO Auto-generated method stub
-
+        p1.getImagePlane().setLayoutX(p1.getSpritePlane().getPoint().getX());
+        p1.getImagePlane().setLayoutY(p1.getSpritePlane().getPoint().getY());
     }
 
     public Plane getP1() {
