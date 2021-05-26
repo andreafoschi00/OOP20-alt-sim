@@ -51,6 +51,14 @@ public class Plane {
         return this.spritePlane.getImage();
     }
 
+    public void setPoint(final Point2D point) {
+        this.spritePlane.setPoint2D(point);
+    }
+
+    public Sprite getSpritePlane() {
+        return spritePlane;
+    }
+
     @Override
     public String toString() {
         return "Plane [type=" + type + ", status=" + status + "]";
