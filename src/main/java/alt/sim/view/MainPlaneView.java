@@ -1,11 +1,16 @@
 package alt.sim.view;
 
-import alt.sim.model.ImageClassification;
+
 import alt.sim.model.calculation.ImageResized;
+
 import alt.sim.model.plane.Plane;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
@@ -20,23 +25,24 @@ public class MainPlaneView extends Application {
     /** Screen height of the view.  */
     private static final double SCREEN_HEIGHT = (Screen.getPrimary().getBounds().getHeight() / MainPlaneView.ASPECT_RATIO_DIVISION);
     /** Number used to divide the Screen size. */
-    private static final double ASPECT_RATIO_DIVISION = 1;
+    private static final double ASPECT_RATIO_DIVISION = 1.5;
 
     @Override
     public void start(final Stage stage) throws Exception {
 
         try {
             Pane paneRoot = new Pane();
+            ImageResized planeImageResized = new ImageResized("images/map_components/airplane.png");
+            Canvas canvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+            Plane p1 = new Plane("images/map_components/airplane.png", new Point2D(50, 50));
 
-            Plane p1 = new Plane(ImageClassification.AIRPLANE);
-
+            p1.getSpritePlane().getImageSpriteResized().resizeImageSprite();
             // Calculating the Proportion --> (Image:Screen)
-            p1.getSpritePlane().getImageSpriteResized().resizeImageSprite(true);
-
+            planeImageResized.resizeImageSprite();
 
             // View Plane demonstrating:
             paneRoot.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
+            //paneRoot.getChildren().add(planeImageResized.getImageSprite());
             // Insert Plane test into view:
             paneRoot.getChildren().add(p1.getSpritePlane().getImageSpriteResized().getImageSprite());
 
@@ -44,7 +50,11 @@ public class MainPlaneView extends Application {
             p1.setX(0);
             p1.setY(0);
 
-            // Create a MouseEvent for move the Plane in the Position clicked
+            // Section Canvas
+            paneRoot.getChildren().add(canvas);
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+
+            // Create a MouseEvent
             EventHandler<MouseEvent> handlerMouseClick = new EventHandler<MouseEvent>() { 
 
                 @Override 
@@ -52,12 +62,31 @@ public class MainPlaneView extends Application {
                     p1.setX(event.getX());
                     p1.setY(event.getY());
 
-                    //Insert Center Image when click
-                    centerImagePositionInGame(p1, event);
+                    p1.getImagePlane().setLayoutX(p1.getX());
+                    p1.getImagePlane().setLayoutY(p1.getY());
                 } 
              };
 
+             EventHandler<MouseEvent> handlerMousePressed = new EventHandler<MouseEvent>() { 
+
+                 @Override 
+                 public void handle(final MouseEvent event) { 
+                   drawShapes(gc, event.getX(), event.getY());
+                 } 
+             };
+
+             EventHandler<MouseEvent> handlerMouseDragged = new EventHandler<MouseEvent>() { 
+
+                 @Override 
+                 public void handle(final MouseEvent event) { 
+                   drawShapes(gc, event.getX(), event.getY());
+                 } 
+              }; 
+
+
             paneRoot.addEventHandler(MouseEvent.MOUSE_CLICKED, handlerMouseClick);
+            canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, handlerMousePressed); 
+            canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, handlerMouseDragged); 
 
             Scene scene = new Scene(paneRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
             stage.setScene(scene);
@@ -67,11 +96,10 @@ public class MainPlaneView extends Application {
             e.printStackTrace();
         }
     }
-
-    private void centerImagePositionInGame(final Plane planeInGame, final MouseEvent event) {
-        //Insert Center Image when click
-        planeInGame.getImagePlane().setLayoutX(event.getX() - (planeInGame.getImagePlane().getFitWidth() / 2));
-        planeInGame.getImagePlane().setLayoutY(event.getY() - (planeInGame.getImagePlane().getFitHeight() / 2));
+    
+    private void drawShapes(final GraphicsContext gc, final double x, final double y) {
+        gc.lineTo(x, y);
+        gc.stroke();
     }
 
     /**
