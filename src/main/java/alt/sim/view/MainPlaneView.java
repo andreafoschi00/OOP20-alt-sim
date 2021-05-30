@@ -1,9 +1,14 @@
 package alt.sim.view;
 
+
 import alt.sim.model.ImageResized;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -27,8 +32,8 @@ public class MainPlaneView extends Application {
         this.paneRoot.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.scene = new Scene(paneRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        planeImageResized.resizeImageSprite();
-        paneRoot.getChildren().add(planeImageResized.getImageSprite());
+        //planeImageResized.resizeImageSprite();
+        //paneRoot.getChildren().add(planeImageResized.getImageSprite());
     }
 
     public MainPlaneView(final double screenWidth, final double screenHeight) {
@@ -47,11 +52,37 @@ public class MainPlaneView extends Application {
         try {
             ImageResized planeImageResized = new ImageResized();
             // Calculating the Proportion --> (Image:Screen)
-            planeImageResized.resizeImageSprite();
+            //planeImageResized.resizeImageSprite();
 
             // View Plane demonstrating:
-            paneRoot.getChildren().add(planeImageResized.getImageSprite());
+            //paneRoot.getChildren().add(planeImageResized.getImageSprite());
+            Rectangle staticAirStripArea = new Rectangle(50, 100);
+            Rectangle plane = new Rectangle (50, 50);
 
+            plane.setFill(Paint.valueOf("BLUE"));
+            staticAirStripArea.setLayoutX(150);
+            staticAirStripArea.setLayoutY(100);
+            staticAirStripArea.setFill(Paint.valueOf("RED"));
+
+            //Mouse Click event
+            EventHandler<MouseEvent> eventMouseClicked = new EventHandler<MouseEvent>() { 
+                @Override 
+                public void handle(final MouseEvent e) {
+                   plane.setLayoutX(e.getX());
+                   plane.setLayoutY(e.getY());
+                   
+                   
+                   //Check collison Plane with AirStrip
+                   if (staticAirStripArea.getBoundsInParent().intersects(plane.getBoundsInParent())) {
+                       System.out.println("AirStrip collided");
+                   }
+                } 
+            };
+
+            //Registering the event filter 
+            paneRoot.addEventFilter(MouseEvent.MOUSE_CLICKED, eventMouseClicked);
+
+            paneRoot.getChildren().addAll(staticAirStripArea, plane); 
             stage.setScene(scene);
             //set the Screen in FullScreen mode:
             stage.setFullScreen(MainPlaneView.fullScreenMode);
